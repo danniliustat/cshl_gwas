@@ -16,37 +16,37 @@ We use both bash and R codes in this notebook. The type of programming language 
 
 ## Environment Setting
 
-Before we can run any analysis, we need to set the working directory path to the downloaded "cshl_2024" folder for both Terminal and Console in RStudio. Below are the codes to setup paths at both places. These paths have to be setup correctly at first, otherwise we can't locate the correct input files.
+Before we can run any analysis, we need to set the working directory path to the downloaded "cshl_gwas" folder for both Terminal and Console in RStudio. Below are the codes to setup paths at both places. These paths have to be setup correctly at first, otherwise we can't locate the correct input files.
 
 ```{r eval=F}
-# change the paths to where you saved "cshl_2024"
+# change the paths to where you saved "cshl_gwas"
 ## run in Terminal
-mydir="/path/to/cshl_2024"
+mydir="/path/to/cshl_gwas"
 cd $mydir
 
 # R codes- run in R Console
-setwd("/path/to/cshl_2024")
+setwd("/path/to/cshl_gwas")
 ```
 
 
 ## GWAS Tools
 We will use two main program tools in this notebook, **PLINK** (version 1.9) and **IMPUTE2**.
 
-**PLINK** (version 1.9) is used for quality control and perform association test for large scale genotype data. You can find the .zip files suitable for your laptop system in "cshl_2024/Tools/PLINK" and unzip it to call the `plink` program in the folder.
+**PLINK** (version 1.9) is used for quality control and perform association test for large scale genotype data. You can find the .zip files suitable for your laptop system in "cshl_gwas/Tools/PLINK" and unzip it to call the `plink` program in the folder.
 
-**IMPUTE2** is used for genotype imputation and haplotype phasing. You can download its program using this link. IMPUTE2 program is only available to run in Linux or macOS system. You can find the zipped installation file in "cshl_2024/Tools/IMPUTE2". If you want to perform imputation for your own data, you also need to download the required reference genome from the above link. But in this notebook will only use the example genome.
+**IMPUTE2** is used for genotype imputation and haplotype phasing. You can download its program using this link. IMPUTE2 program is only available to run in Linux or macOS system. You can find the zipped installation file in "cshl_gwas/Tools/IMPUTE2". If you want to perform imputation for your own data, you also need to download the required reference genome from the above link. But in this notebook will only use the example genome.
 
 We will also introduce a tool called **MAGMA** for gene-set analysis in later chapters.
 
 > <span style="color: #0064a4;">
-Important: If you want to run these programs on your laptop, please make sure you have unzipped the installation packages in "./cshl_2024/Tools" that is suitable for your laptop systerm. We will directly call PLINK and IMPUTE2 programs using abusolute or relative paths.
+Important: If you want to run these programs on your laptop, please make sure you have unzipped the installation packages in "./cshl_gwas/Tools" that is suitable for your laptop systerm. We will directly call PLINK and IMPUTE2 programs using abusolute or relative paths.
 </span>
 
 Instructions on installing these two tools can be found on in Chapter 1.
 
-After you cloned the repository "cshl_2024" folder, you can find the `Tools` folder contatining installation packages for different systems. Then, you can unzip the zip files and call the programs by specifying its absolute path. For example, for macOS users, you can unzip the installer by double clicking, and call PLINK using `/path/to/cshl_2024/Tools/PLINK/plink_mac_20231211/plink`; for Windows users, you need to unzip the package "plink_win64.zip" with right click->"Extract All...". Then you can call PLINK with `/path/to/cshl_2024/Tools/PLINK/plink_win64_20231211/plink.exe`.
+After you cloned the repository "cshl_gwas" folder, you can find the `Tools` folder contatining installation packages for different systems. Then, you can unzip the zip files and call the programs by specifying its absolute path. For example, for macOS users, you can unzip the installer by double clicking, and call PLINK using `/path/to/cshl_gwas/Tools/PLINK/plink_mac_20231211/plink`; for Windows users, you need to unzip the package "plink_win64.zip" with right click->"Extract All...". Then you can call PLINK with `/path/to/cshl_gwas/Tools/PLINK/plink_win64_20231211/plink.exe`.
 
-You should modify the above `/path/to/cshl_2024` to where your "cshl_2024" folder is.
+You should modify the above `/path/to/cshl_gwas` to where your "cshl_gwas" folder is.
 
 > <span style="color: #0064a4;">
 However, macOS users need to go through additional steps to authorize PLINK, IMPUTE2 and MAGMA programs before you can call them! But you can perform these authorization steps only when you need to call the programs. See below.

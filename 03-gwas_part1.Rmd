@@ -16,15 +16,15 @@ Here we introduce a hands-on practice of a case study on genome-wide association
 Before we can run any analysis, we need to set the working path in both R and bash and install the necessary R packages. To setup the working directory, make sure you run the following codes in R.
 
 ```{bash eval=F}
-# change the path below to where you saved "cshl_2024" folder
+# change the path below to where you saved "cshl_gwas" folder
 ## run in R Terminal
-mydir="/path/to/cshl_2024/Data/case_data"
+mydir="/path/to/cshl_gwas/Data/case_data"
 cd $mydir
 ```
 
 ```{r eval=F}
 # R codes- run in R Console
-setwd("/path/to/cshl_2024/Data/case_data")
+setwd("/path/to/cshl_gwas/Data/case_data")
 mydir<-getwd()
 ```
 
@@ -75,7 +75,7 @@ The following code can download the pheonotype and genotype data.
 
 ```{bash}
 # bash codes- run in terminal
-# data_path=/path/to/cshl_2024/Data/case_data
+# data_path=/path/to/cshl_gwas/Data/case_data
 # wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE129nnn/GSE129162/matrix/GSE129162_series_matrix.txt.gz -P $data_path
 # gunzip $data_path/*gz #this code replaces the .gz file with an uncompressed file
 ```
@@ -92,7 +92,7 @@ The following code is what we used to download and unzip the genotype data. You 
 
 ```{bash}
 # bash codes- run in terminal
-# data_path=/path/to/cshl_2024/Data/case_data
+# data_path=/path/to/cshl_gwas/Data/case_data
 # wget https://ftp.ncbi.nlm.nih.gov/geo/series/GSE129nnn/GSE129162/suppl/GSE129162%5FPlate%5F1%5FFull%5FData%5FTable%2Etxt%2Egz -P $data_path
 # wget https://ftp.ncbi.nlm.nih.gov/geo/series/GSE129nnn/GSE129162/suppl/GSE129162%5FPlate%5F2%5FFull%5FData%5FTable%2Etxt%2Egz -P $data_path
 # gunzip $data_path/*gz

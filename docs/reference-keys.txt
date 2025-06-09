@@ -105,3 +105,6 @@ eqtl-analysis
 cis-eqtl-and-trans-eqtl-analysis
 multiple-testing-correction
 gene-regional-manhanttan-plots
+fig:pval
+fig:PCplot
+fig:PCplot2

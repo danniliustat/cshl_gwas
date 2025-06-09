@@ -5,8 +5,11 @@ This repository is for CSHL Summer Course on GWAS analysis.
 Speaker: Min Zhang, Danni Liu, University of California, Irvine
 
 **Before you start, please clone this whole repository to your personal laptop. Click "File"-> "New Project". Select "Version Control" -> "Git". In the next window, "Repository URL" is the github URL `https://github.com/danniliustat/cshl_gwas.git` we will clone, "Project directory name" is "cshl_gwas", "Create project as subdirectory of" should be where you want the project folder to save. I recommend using a top-level directory in your system, such as "Documents", so that it's easier to navigate and retrive the path. A ZIP file (likely with name "cshl_gwas") will be saved to your laptop. Unzip the file to access all datasets and materials.**
+
 Fig1. Import and clone GitHub repository
-:-------------------------:|:-------------------------:|:-------------------------:
+
+Step 1  |Step 2|  Step 3
+:-------------------------:|:-------------------------:|:-------------------------:|  
 ![step1](./image/clone1.png)  |![step2](./image/clone2.png)|  ![step3](./image/clone3.png)
 
 ### Overview

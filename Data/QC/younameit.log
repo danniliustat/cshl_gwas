@@ -5,12 +5,12 @@ Options in effect:
   --noweb
   --out ./Data/QC/younameit
 
-Hostname: Danni.local
-Working directory: /Users/zhanglab/Documents/cshl_2024
-Start time: Mon Jun 17 14:50:26 2024
+Hostname: mac.lan
+Working directory: /Users/oooliviaaa/Documents/cshl_gwas
+Start time: Mon Jun  9 00:31:35 2025
 
 Note: --noweb has no effect since no web check is implemented yet.
-Random number seed: 1718650226
+Random number seed: 1749454295
 16384 MB RAM detected; reserving 8192 MB for main workspace.
 Scanning .ped file... done.
 Performing single-pass .bed write (5 variants, 344 people).
@@ -19,7 +19,7 @@ Performing single-pass .bed write (5 variants, 344 people).
 5 variants loaded from .bim file.
 344 people (281 males, 0 females, 63 ambiguous) loaded from .fam.
 Ambiguous sex IDs written to ./Data/QC/younameit.nosex .
-Using up to 4 threads (change this with --threads).
+Using up to 8 threads (change this with --threads).
 Before main variant filters, 344 founders and 0 nonfounders present.
 Calculating allele frequencies... done.
 Total genotyping rate is 0.976744.
@@ -28,4 +28,4 @@ Note: No phenotypes present.
 IBD calculations complete.
 Finished writing ./Data/QC/younameit.genome .
 
-End time: Mon Jun 17 14:50:26 2024
+End time: Mon Jun  9 00:31:35 2025
