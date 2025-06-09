@@ -1,0 +1,214 @@
+# LDSC and Gene-Set Analysis
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "./Data/magma")
+getwd
+```
+
+```{r eval=T, echo=F, message=FALSE, warnings=FALSE}
+# R codes- run in R Console
+#load R packages
+library(data.table)
+library(dplyr)
+library(GEOquery)
+library(qqman)
+library(png)
+```
+
+Due to privacy concern, there haven't been many individual genotype datasets that are publically available online. So finding and preparing a genotype data for GWAS analysis can cost great efforts in research. Here are several analysis tools that are able to directly handle GWAS summary statistics and perform post-GWAS analysis.
+
+## LDSC (Linkage Disequilibrium Score Regression)
+
+LDSC is a popular tool to use when you only have the public results from GWAS analysis. LDSC aims to quantify the polygenic effects, such as population stratification, using regression analysis. Please check the original paper from [Bulik-Sullivan et al.(2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4495769/).
+
+It has to be installed in command line and requires Anaconda python dstribution. We won't practice this software here since the installation may depend on computer system. But you can try the examples on their website if your laptop satisfies the system requirements.
+
+[LDSC Github page](https://github.com/bulik/ldsc) contains installation instructions. They also provide detailed examples on how to {estimate LD scores](https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial), [estimate SNP heritability and genetic correlation among phenotypes](https://github.com/bulik/ldsc/wiki/Heritability-and-Genetic-Correlation) and [partition the heritability into categories](https://github.com/bulik/ldsc/wiki/Partitioned-Heritability) using GWAS summary statistics.
+
+Below are two public courses that gives a good introduction to LDSC:
+
+[Video 1: LD Score Regression I, Heritability and Partitioning](https://www.youtube.com/watch?v=dVrF0l9jMgE)
+
+[Video 2: LD Score Regression II, Heritability and Partitioning](https://www.youtube.com/watch?v=QVPNouAbXsY)
+
+## MAGMA (for Gene-Level Analysis)
+
+MAGMA is a statistical methods for gene-set analysis of multiple genetic markers. This method can be used when the individual marker's effects are too weak to be detected, such as in polygenic traits. It aims to analyze multiple markers simultaneously to estimate their joint effects. Please check the paper from [de Leewu et al.(2015)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004219).
+
+The analysis consists of two parts. The first part is gene analysis, which combines all SNPs within a gene region and examines the overall association between each gene and phenotype using a multiple linear regression model. This step requires the raw genotype data if not already have the GWAS results. The second part is gene-set analysis, which tests whether genes within a defined gene-set is more associated with the pheotype than those outside of the set.
+
+For each gene $g$, we obtain the gene p-value $p_g$ from part one of gene analysis. Next, for the part two of gene-set analysis, we first transform the p-values $p_g$ to Z-value using:
+<center>  $z_g=\Phi^{-1}(1-p_g)$, where $\Phi^{-1}$ is the probit function </center> 
+
+For gene set analysis, we test whether genes exhibit a stronger association with the phenotype of interest compared to other genes within a specific gene-set $s$ :
+
+<center>  $Z = \beta_{0s} + S_s\beta_s + \epsilon$ </center> 
+
+$\beta_{0s}$:  intercept  
+$S_s:$ An indicator variable, with $S_g=1$ for gene $g$ in the gene set $s$.  
+$\beta_s$: effect of genes inside the gene sets compared to genes outside the region  
+$\epsilon$: residual  
+
+Then, MAGMA uses a t-test to test whether genes inside the test is more associated with the phenotype $\beta_s>0$, against null $\beta_s=0$.
+
+The MAGMA program can be downloaded from [MAGMA website](https://cncr.nl/research/magma/) and can be installed under multiple systems. You can check their manual [HERE](https://vu.data.surfsara.nl/index.php/s/MUiv3y1SFRePnyG).
+
+Additionally, their website also provides a list of public GWAS summary statistics data for you to download and practice. Please check them [HERE](https://ctg.cncr.nl/software/summary_statistics).
+
+The MAGMA installation packages are already downloaded inside `Tools/MAGMA`. 
+
+
+### Prepare Annotation File
+
+Before we can run gene analysis, we need to map SNPs to genes based on their physical locations.
+
+First set the working directory:
+```{bash eval=F}
+# change the path below to where you saved "cshl_2024" folder
+## run in R Terminal
+mydir="/path/to/cshl_2024/Data/magma"
+cd $mydir
+```
+
+```{r eval=F}
+# R codes- run in R Console
+setwd("/path/to/cshl_2024/Data/magma")
+mydir<-getwd()
+```
+
+MAGMA directly runs on PLINK binary format files, which is not human readable. We had `.ped` and `.map` files from PLINK, which is a text-based format and can be read by us. Let's convert these text-based files to binary format file set `.bed`, `.bim` and `.fam` using PLINK.
+
+```{bash eval=F}
+## # both Mac and Windows can run in Terminal
+# windows users
+../../Tools/PLINK/plink_win64_20231211/plink.exe \
+--noweb --file ../case_data/genotype_1k --out genotype_1k
+```
+```{bash eval=T,message=FALSE, warnings=FALSE}
+# macOS users
+../../Tools/PLINK/plink_mac_20231211/plink \
+--noweb --file ../case_data/genotype_1k --out genotype_1k
+```
+
+Before we run the MAGMA for gene level analysis, we have to create a annotation file that map the SNPs to gene. `MAGMA` directly handles this step with `--annotate`. The input files are two location files, one for SNP location and one for gene location. The output file is a file with extension `.annot` that contains one-to-one mapping of genes and SNPs. 
+
+By default, the `--annotate` doesn't extend the gene region. But if we want to use all SNPs within a gene's regulation region, we can specify the extending window using `--annotate window`. For example, `--annotate window=20,10` set a 20 kilobase pair(kb) upstream and 10kb downstream window.
+
+```{bash eval=F}
+## both Mac and Windows can run in Terminal
+# windows users
+../../Tools/MAGMA/magma_windows/magma --annotate --snp-loc genotype_1k.bim \
+        --gene-loc NCBI37.3.gene.loc \
+        --out genotype_1k
+```
+```{bash message=FALSE, warnings=FALSE}
+# mac users
+../../Tools/MAGMA/magma_v1.10_mac/magma --annotate --snp-loc genotype_1k.bim \
+        --gene-loc NCBI37.3.gene.loc \
+        --out genotype_1k
+```
+
+### Part 1: Gene Analysis
+
+With the mapping file between SNPs and genes, we can perform the part one of gene analysis. We have the raw genotype data, therefore we can submit the input files for genotype binary files in `--bfile` and phenotype file in `--pheno` in the codes below. 
+
+If we only have p-values from GWAS results, we need to add a `--pval` option specifying a file containing SNPs p-values. Then the genotype data specified by `--bfile` will be the reference data used 
+to estimate LD between SNPs.
+
+```{bash eval=F,results='hide',message=FALSE, warnings=FALSE}
+## both Mac and Windows can run in Terminal
+# windows users
+../../Tools/MAGMA/magma_windows/magma --bfile genotype_1k \
+        --pheno file=phenotype_plink.txt \
+        --gene-annot genotype_1k.genes.annot \
+        --out younameit
+```
+
+```{bash results='hide',message=FALSE, warnings=FALSE}
+# mac users
+../../Tools/MAGMA/magma_v1.10_mac/magma --bfile genotype_1k \
+        --pheno file=phenotype_plink.txt \
+        --gene-annot genotype_1k.genes.annot \
+        --out younameit
+```
+
+The output file is ended with `.genes.out`.
+
+```{bash}
+head younameit.genes.out
+```
+
+we can also generate manhattan plots to compare the SNP-wise results and gene-based results.
+
+```{r message=FALSE, warnings=FALSE}
+library(data.table)
+library(dplyr)
+magma_result <- fread("younameit.genes.out")
+annotate <- fread("NCBI37.3.gene.loc")
+# replace gene index with gene name 
+magma_result[, 1] <- annotate[match(as.matrix(magma_result[, 1]), as.matrix(annotate[, 1])), 6]
+# show some of the result
+head(magma_result)
+
+# resummarize for manhattan plot 
+qassoc = cbind(magma_result$CHR, magma_result$GENE, (magma_result$START+magma_result$STOP)/2, magma_result$P)
+colnames(qassoc) <- c("CHR","SNP", "BP", "P")
+qassoc <- as.data.frame(qassoc)
+qassoc$CHR <- as.integer(qassoc$CHR)
+qassoc$BP <- as.numeric(qassoc$BP)
+qassoc$P <- as.numeric(qassoc$P)
+qassoc <- qassoc %>% arrange(P)
+head(qassoc)
+
+png(filename=paste0("Manhattan_Plot_for_magma.png"))
+manhattan(qassoc, col=c("dimgray", "darkgoldenrod1"), suggestiveline=T, genomewideline=F, annotatePval=0.001)
+dev.off()
+```
+
+We can load the plot from MAGMA for gene-based results:
+```{r magma1}
+img <- readPNG("Manhattan_Plot_for_magma.png")
+grid::grid.raster(img)
+```
+
+This is the previous plot for SNP-based results:
+```{r oldmah}
+img <- readPNG("../case_data/Manhattan_Plot_for_z-4-oh-Tam.png")
+grid::grid.raster(img)
+```
+
+### Part 2: Gene-Set Analysis
+
+For gene-set analysis, we first need to prepare a geneset file that defines the set. The first column is the geneset name, followed by gene IDs in the set that matches IDs in the output file `*.genes.out` from the last step. The manhattan plot shows a strong signal in chromosome 22, so we set the gene set to be all genes in chromosome 22 and test whether they are more closely associated with phenotype than other genes. An example of the gene set file looks like this:
+```{bash}
+head gene_set.txt
+```
+
+The input files to MAGMA includes a binary output file from the last step `*.genes.raw`, which is not human-readable, and the above gene set file we defined. The output files ended with `*gsa.genes.out` which contains results from the test.
+
+```{bash eval=F,results='hide',message=FALSE, warnings=FALSE}
+## both Mac and Windows can run in Terminal
+# windows users
+geneset=gene_set.txt
+../../Tools/MAGMA/magma_windows/magma \
+    --gene-results younameit.genes.raw \
+    --set-annot ${geneset} \
+    --out younameit
+```
+
+```{bash message=FALSE, warnings=FALSE}
+# mac users
+geneset=gene_set.txt
+../../Tools/MAGMA/magma_v1.10_mac/magma \
+    --gene-results younameit.genes.raw \
+    --set-annot ${geneset} \
+    --out younameit
+```
+
+```{bash}
+head younameit.gsa.out
+```
+
+
+
